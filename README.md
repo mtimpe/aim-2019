@@ -1,2 +1,4 @@
-# aim-2019
-Academic-Industry Modeling Week 2019 | Ernst &amp; Young Challenge
+# AIM 2019
+### Ernst & Young Challenge
+
+Sentiment analysis of Enron e-mail dataset
