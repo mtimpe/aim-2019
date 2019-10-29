@@ -9,11 +9,15 @@ Sentiment analysis of Enron e-mail dataset
 
 [Sentiment analysis example on Reddit headlines](https://www.learndatasci.com/tutorials/sentiment-analysis-reddit-headlines-pythons-nltk/)
 
+[Master project in Business Analytics](https://beta.vu.nl/nl/Images/stageverslag-jeukendrup_tcm235-449790.pdf)
 
 ##### Python Network Analysis Libraries
 
 [networkx](https://networkx.github.io/)
 
+##### R Network Visualization tutorials
+
+[https://kateto.net/network-visualization](https://kateto.net/network-visualization)
 
 ##### Python NLP Libraries
 
