@@ -1,5 +1,13 @@
 lt <- function(x) {length(x)}
 
+c.c <- function(...) {
+    ## Creates a named vector whose names are the same elements; for map() use
+    ## It produces the same results with map() as sapply(..., simplify=F)
+    x <- c(...)
+    setNames(x, x)
+}
+
+
 identify_meta <- function(chr) {
     ## Identify boundaries of the metadata
 
