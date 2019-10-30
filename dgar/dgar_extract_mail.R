@@ -192,12 +192,14 @@ sparse <- removeSparseTerms(frequencies, 0.993)
 # Convert the document-term matrix to a data frame called sparseBodiesDF
 sparseBodiesDF <- as.data.frame(as.matrix(sparse))
 # Building wordcloud
-par(bg = "gray27")
+par(bg = "gray10")
 pal <- brewer.pal(7, "Dark2")
 wordcloud(
   colnames(sparseBodiesDF),
   colSums(sparseBodiesDF),
-  scale = c(2.5, 0.25),
-  max.words = 150,
-  colors = pal
+  scale = c(4.5, 0.5), 
+  random.order = F,
+  max.words = 250,
+  colors = pal, 
+  fixed.asp = T
 )
