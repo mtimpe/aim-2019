@@ -3,6 +3,7 @@ library(tidytext)
 library(readtext)
 library(lubridate)
 library(reshape2)
+library(igraph)
 
 ## Set your directory
 mydir <- "/disk2a/dgarolini/eron_EY/aim-2019/dgar/"
@@ -89,47 +90,83 @@ readr::write_csv(corpus, str_glue("{mydir}mail_corpus.csv"), col_names = T)
 corpus <- readRDS(str_glue("{mydir}../mail_corpus.RData"))
 
 # name identifiers
-who <- corpus %>% select(who) %>% map(unique); who <- who[[1]]
+who <- corpus %>% select(who) %>% map(unique) %>% unlist()
 find_candidate_replicates(who)
 
 # email identifiers - from
-email_from <- corpus %>% select(From) %>% map(unique); email_from <- email_from[[1]]
-sim_email <- find_candidate_replicates(email_from, plot_tile_pl = F)
-grep(email_from, pattern = "enron", value = T, invert = T) # all the emails are internals (sender)
+email_from_u <- corpus %>% select(From) %>% map(unique) %>% unlist()
+sim_email <- find_candidate_replicates(email_from_u, plot_tile_pl = F)
+grep(email_from_u, pattern = "enron", value = T, invert = T) # all the emails are internals (sender)
 
 # email identifiers - to
 email_to <- corpus %>% select(To) %>% map(unique)
-sim_email <- find_candidate_replicates(email_to, plot_tile_pl = F)
-grep(email_to, pattern = "enron", value = T, invert = T) # all the emails are internals (sender)
+# sim_email <- find_candidate_replicates(email_to, plot_tile_pl = F)
+# grep(email_to, pattern = "enron", value = T, invert = T) # all the emails are internals (sender)
 
+email_from <- corpus %>% select(From) %>% unlist()
+email_to <- corpus %>% select(To)
+email_to <- sapply(email_to[[1]], function(x) {
+  uu <- x[x %in% email_from_u]
+  if(length(uu)==0) uu <- NA
+  uu
+  })
+na_scuper <- sapply(email_to, function(x) all(is.na(x)))
+email_to <- email_to[!na_scuper]
+the_max <- which.max(sapply(email_to, length))
+max(sapply(email_to, length))
+# email_to2 <- lapply(email_to, function(x) c(x, rep(NA, the_max - length(x))))
+# email_to[the_max]
+cat(corpus %>% slice(the_max) %>% select(corpus) %>% pull() %>% unlist(), sep = "\n")
+# %>% mutate_at( "To", .funs = map, ~ str_extract(.x, pattern = paste(who, sep = "|")))
+etry <- tibble(email_from=email_from[!na_scuper], email_to=email_to) %>% unnest(cols = c(email_to)) %>% as.matrix()
+entry_mask <- sapply(1:nrow(etry), function(x) any(duplicated(etry[x,])))
+etry <- etry[!entry_mask,]
+# etry2 <- etry %>% distinct(email_from, email_to)
 # Define network
-g <- graph_from_edgelist(as.matrix(inboxes), directed=F)
+g <- graph_from_edgelist(as.matrix(etry), directed=T)
+clusters <- clusters(g)
+giant <- clusterg() ## using the biggest component as an example, you can use the others here.
+communities = giant.community_spinglass()
 coms <- spinglass.community(g)
 
+a <- tibble(a=c(1,1,2), b =c(1,2,3)) 
+a[sapply(1:nrow(a), duplicated)]
+
 # Plot network
-par(mar=c(0,0,2,0))
 plot(coms, g, 
      vertex.label=NA, 
      layout=layout.fruchterman.reingold,
      vertex.size=3,
-     main="Enron e-mail network snapshot"
+     main="Enron e-mail network global"
 )
 
-# WORDCLOUD 
-corpus <- Corpus(VectorSource(bodies))
+# WORDCLOUD ================
+library(SnowballC)
+library(wordcloud)
+library(tm)
+corpus <- readRDS(str_glue("{mydir}../mail_corpus.RData"))
+
+bodies <- corpus %>% select(corpus)
+corpus <- Corpus(VectorSource(bodies[[1]]))
 # Convert the corpus to lowercase
-corpus <- tm_map(corpus,tolower)
-corpus <- tm_map(corpus, PlainTextDocument)
+corpus <- tm_map(corpus, tolower)
+inspect(corpus[[1]])
+# corpus <- tm_map(corpus, PlainTextDocument) # it is removing everything here
 # Remove punctuation from the corpus
 corpus <- tm_map(corpus, removePunctuation)
+inspect(corpus[[1]])
 # Remove all English-language stopwords
 corpus <- tm_map(corpus, removeWords, stopwords("english"))
+corpus
+inspect(corpus[[1]])
+
 # Remove some more words
 corpus <-
   tm_map(
     corpus,
     removeWords,
     c(
+      "c",
       "just",
       "will",
       "thanks",
@@ -141,12 +178,17 @@ corpus <-
       "per"
     )
   )
+
+corpus
+inspect(corpus[[1]])
+
 # Stem document
-corpus <- tm_map(corpus, stemDocument)
+corpus <- tm_map(corpus, stemDocument) # This function extracts the stems of each of the given words in the vector.
+corpus <- tm_map(corpus, removeNumbers) # This function extracts the stems of each of the given words in the vector.
 # Build a document-term matrix out of the corpus
 frequencies <- DocumentTermMatrix(corpus)
 # remove Sparse Term
-sparse <- removeSparseTerms(frequencies, 0.99)
+sparse <- removeSparseTerms(frequencies, 0.991)
 # Convert the document-term matrix to a data frame called sparseBodiesDF
 sparseBodiesDF <- as.data.frame(as.matrix(sparse))
 # Building wordcloud
