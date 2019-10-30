@@ -28,4 +28,5 @@ Sentiment analysis of Enron e-mail dataset
 
 ##### Visualization
 
-![alt text](http://url/to/img.png)
+- wordcloud
+![wordcloud](https://github.com/seattlemiles/aim-2019/blob/dgarol_dev/dgar/word_cloud993sparsity.png)
