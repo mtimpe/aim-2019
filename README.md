@@ -9,6 +9,8 @@ Sentiment analysis of Enron e-mail dataset
 
 [Sentiment analysis example on Reddit headlines](https://www.learndatasci.com/tutorials/sentiment-analysis-reddit-headlines-pythons-nltk/)
 
+[Verbal aggression detection on Twitter comments](https://link.springer.com/article/10.1007/s00521-018-3442-0)
+
 [Master project in Business Analytics](https://beta.vu.nl/nl/Images/stageverslag-jeukendrup_tcm235-449790.pdf)
 
 ##### Python Network Analysis Libraries
