@@ -184,11 +184,11 @@ inspect(corpus[[1]])
 
 # Stem document
 corpus <- tm_map(corpus, stemDocument) # This function extracts the stems of each of the given words in the vector.
-corpus <- tm_map(corpus, removeNumbers) # This function extracts the stems of each of the given words in the vector.
+corpus <- tm_map(corpus, removeNumbers) 
 # Build a document-term matrix out of the corpus
 frequencies <- DocumentTermMatrix(corpus)
 # remove Sparse Term
-sparse <- removeSparseTerms(frequencies, 0.991)
+sparse <- removeSparseTerms(frequencies, 0.993)
 # Convert the document-term matrix to a data frame called sparseBodiesDF
 sparseBodiesDF <- as.data.frame(as.matrix(sparse))
 # Building wordcloud

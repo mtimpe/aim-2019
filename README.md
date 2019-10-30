@@ -28,4 +28,4 @@ Sentiment analysis of Enron e-mail dataset
 
 ##### Visualization
 
-![Chord diagram](https://python-graph-gallery.com/wp-content/uploads/231_Chord_Bokeh.png)
+![alt text](http://url/to/img.png)
