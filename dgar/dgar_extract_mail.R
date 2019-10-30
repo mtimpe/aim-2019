@@ -144,48 +144,63 @@ plot(coms, g,
 library(SnowballC)
 library(wordcloud)
 library(tm)
-corpus <- readRDS(str_glue("{mydir}../mail_corpus.RData"))
+corpus_gen <- readRDS(str_glue("{mydir}../mail_corpus.RData"))
+corpus_gen <- corpus_gen %>% arrange(DateUTC)
+trials <- corpus_gen %>% select(DateUTC) %>% unlist() 
+d
+trials[1] > ymd("2000/10/1") 
+as_datetime(trials[1])
+as_datetime(trials[length(trials)])
 
-bodies <- corpus %>% select(corpus)
-corpus <- Corpus(VectorSource(bodies[[1]]))
-# Convert the corpus to lowercase
-corpus <- tm_map(corpus, tolower)
-inspect(corpus[[1]])
-# corpus <- tm_map(corpus, PlainTextDocument) # it is removing everything here
-# Remove punctuation from the corpus
-corpus <- tm_map(corpus, removePunctuation)
-inspect(corpus[[1]])
-# Remove all English-language stopwords
-corpus <- tm_map(corpus, removeWords, stopwords("english"))
-corpus
-inspect(corpus[[1]])
+c1_pre <- corpus_gen %>% filter(DateUTC > ymd("2000/1/1"), DateUTC < ymd("2000/12/31"))
+c2_post <- corpus_gen %>% filter(DateUTC > ymd("2001/1/1"), DateUTC < ymd("2001/12/31"))
 
-# Remove some more words
-corpus <-
-  tm_map(
-    corpus,
-    removeWords,
-    c(
-      "c",
-      "just",
-      "will",
-      "thanks",
-      "please",
-      "can",
-      "let",
-      "said",
-      "say",
-      "per"
+
+text_filter_tm <- function(corpus){
+  bodies <- corpus_gen %>% select(corpus)
+  corpus <- Corpus(VectorSource(bodies[[1]]))
+  
+  # Convert the corpus to lowercase
+  corpus <- tm_map(corpus, tolower)
+  # inspect(corpus[[1]])
+  # corpus <- tm_map(corpus, PlainTextDocument) # it is removing everything here
+  # Remove punctuation from the corpus
+  corpus <- tm_map(corpus, removePunctuation)
+  # Remove all English-language stopwords
+  corpus <- tm_map(corpus, removeWords, stopwords("english"))
+  # Remove some more words
+  corpus <-
+    tm_map(
+      corpus,
+      removeWords,
+      c(
+        "c",
+        "just",
+        "will",
+        "thanks",
+        "please",
+        "can",
+        "let",
+        "said",
+        "say",
+        "per"
+      )
     )
-  )
+  # Stem document
+  corpus <- tm_map(corpus, stemDocument) # This function extracts the stems of each of the given words in the vector.
+  # remove numbers
+  corpus <- tm_map(corpus, removeNumbers) 
+  invisible(corpus)
+}
 
-corpus
-inspect(corpus[[1]])
+# corpus
+# inspect(corpus[[1]])
+corpus1 <- text_filter_tm(c1_pre)
+corpus2 <- text_filter_tm(c2_post)
 
-# Stem document
-corpus <- tm_map(corpus, stemDocument) # This function extracts the stems of each of the given words in the vector.
-corpus <- tm_map(corpus, removeNumbers) 
 # Build a document-term matrix out of the corpus
+corpus <- corpus1
+corpus <- corpus2
 frequencies <- DocumentTermMatrix(corpus)
 # remove Sparse Term
 sparse <- removeSparseTerms(frequencies, 0.993)
