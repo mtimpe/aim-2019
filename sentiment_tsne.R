@@ -6,15 +6,15 @@ library(Rtsne)
 
 ## Set your directory
 
-mydir <- "~/Projects/AIM2019/"
+mydir <- "/disk2a/dgarolini/eron_EY/aim-2019/dgar/"
 
-source(str_glue("{mydir}support.R"))
+source(str_glue("{mydir}/../support.R"))
 setwd(mydir)
 
 ## Lexicon with sentiment categories
 lexicon <- get_sentiments("nrc")
 
-corpus <- readRDS("~/Projects/AIM2019/mail_corpus.RData")
+corpus <- readRDS(str_glue("{mydir}../mail_corpus.RData"))
 
 details <- select(corpus, -corpus)
 

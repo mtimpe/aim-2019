@@ -30,4 +30,5 @@ Sentiment analysis of Enron e-mail dataset
 
 ##### Visualization
 
-![Chord diagram](https://python-graph-gallery.com/wp-content/uploads/231_Chord_Bokeh.png)
+- wordcloud
+![wordcloud](https://github.com/seattlemiles/aim-2019/blob/dgarol_dev/dgar/word_cloud993sparsity.png)
