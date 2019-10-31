@@ -123,14 +123,12 @@ entry_mask <- sapply(1:nrow(etry), function(x) any(duplicated(etry[x,])))
 etry <- etry[!entry_mask,]
 # etry2 <- etry %>% distinct(email_from, email_to)
 # Define network
-g <- graph_from_edgelist(as.matrix(etry), directed=T)
+g <- graph_from_edgelist(as.matrix(etry), directed=F)
 clusters <- clusters(g)
-giant <- clusterg() ## using the biggest component as an example, you can use the others here.
-communities = giant.community_spinglass()
 coms <- spinglass.community(g)
 
-a <- tibble(a=c(1,1,2), b =c(1,2,3)) 
-a[sapply(1:nrow(a), duplicated)]
+# a <- tibble(a=c(1,1,2), b =c(1,2,3)) 
+# a[sapply(1:nrow(a), duplicated)]
 
 # Plot network
 plot(coms, g, 
